@@ -100,7 +100,6 @@
 				<form action="${pageContext.request.contextPath}/contact/new"
 					method="post" class="">
 					<div class="modal-body">
-
 						<div class="form-group">
 							<div class="input-group">
 								<div class="input-group-addon">
@@ -131,7 +130,6 @@
 			</div>
 		</div>
 	</div>
-
 	<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog"
 		aria-labelledby="mediumModalLabel" aria-hidden="true">
 		<div class="modal-dialog modal-lg" role="document">
@@ -143,12 +141,10 @@
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
-
-				<div class="modal-body">Do you want to delete this contact?</div>
-
 				<form id="deleteModal"
 					action="${pageContext.request.contextPath}/contact/delete"
 					method="post" class="">
+					<div class="modal-body">Do you want to delete this contact?</div>
 					<input hidden type="text" id="id" name="id" class="form-control">
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary"

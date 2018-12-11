@@ -12,11 +12,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import bases.BaseServlet;
 import commons.ErrorCodes;
+import commons.SuccessCodes;
 import commons.URLPattern;
 import daos.ContactDAO;
 import models.Contact;
 
-@WebServlet(name = "ContactServlet", urlPatterns = {"/contact/edit", "/contact/new", "/contact", "/contact/list", "/contact/delete"})
+@WebServlet(name = "ContactServlet", urlPatterns = {"", "/contact/edit", "/contact/new", "/contact", "/contact/list", "/contact/delete", "/contact/test"})
 public class ContactServlet extends BaseServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -35,6 +36,12 @@ public class ContactServlet extends BaseServlet {
 	@Override
 	public void handleGet(HttpServletRequest request, HttpServletResponse response) {
 		// TODO Auto-generated method stub
+		list(request, response);
+	}
+
+	@Override
+	public void handlePost(HttpServletRequest request, HttpServletResponse response) {
+		// TODO Auto-generated method stub
 		switch (getAction(request)) {
 		case "/contact/edit":
 			edit(request, response);
@@ -42,7 +49,7 @@ public class ContactServlet extends BaseServlet {
 		case "/contact/new":
 			create(request, response);
 			break;
-		case "/contact/list": case "/contact":
+		case "/contact/list": case "/contact": case "":
 			list(request, response);
 			break;
 		case "/contact/delete":
@@ -51,13 +58,6 @@ public class ContactServlet extends BaseServlet {
 		default:
 			break;
 		}
-		
-	}
-
-	@Override
-	public void handlePost(HttpServletRequest request, HttpServletResponse response) {
-		// TODO Auto-generated method stub
-		handleGet(request, response);
 	}
 
 	private void create(HttpServletRequest request, HttpServletResponse response) {
@@ -68,15 +68,14 @@ public class ContactServlet extends BaseServlet {
 
 		try {
 			if (ContactDAO.getInstance().storeContact(contact)) {
-				sendRedirect(request, response, "/contact");
+				setSuccessCode(request, SuccessCodes.CREATE_CONTACT_SUCCESS);
+				forward(request, response, "/contact");
 			} else {
-				request.setAttribute("error", ErrorCodes.CREATE_NEW_FAIL);
-				request.getRequestDispatcher("/index.jsp").forward(request, response);
+				setErrorCode(request, ErrorCodes.CREATE_NEW_CONTACT_FAIL);
+				forward(request, response, "/contact");
 			}
 
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ServletException e) {
+		} catch (IOException | ServletException e) {
 			e.printStackTrace();
 		}
 	}
@@ -86,14 +85,13 @@ public class ContactServlet extends BaseServlet {
 
 		try {
 			if (ContactDAO.getInstance().deleteContact(id)) {
-				sendRedirect(request, response, "/contact");
+				setSuccessCode(request, SuccessCodes.DELETE_CONTACT_SUCCESS);
+				forward(request, response, "/contact");
 			} else {
-				request.setAttribute("error", ErrorCodes.DELETE_FAIL);
-				request.getRequestDispatcher("index.jsp").forward(request, response);
+				setErrorCode(request, ErrorCodes.DELETE_CONTACT_FAIL);
+				forward(request, response, "/contact");
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ServletException e) {
+		} catch (IOException | ServletException e) {
 			e.printStackTrace();
 		}
 	}
@@ -105,14 +103,13 @@ public class ContactServlet extends BaseServlet {
 
 		try {
 			if (ContactDAO.getInstance().updateContact(id, name, phoneNumber)) {
-				sendRedirect(request, response, "/contact");
+				setSuccessCode(request, SuccessCodes.UPDATE_CONTACT_SUCCESS);
+				forward(request, response, "/contact");
 			} else {
-				request.setAttribute("error", ErrorCodes.UPDATE_FAIL);
-				request.getRequestDispatcher("index.jsp").forward(request, response);
+				setErrorCode(request, ErrorCodes.UPDATE_CONTACT_FAIL);
+				forward(request, response, "/contact");
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ServletException e) {
+		} catch (IOException | ServletException e) {
 			e.printStackTrace();
 		}
 	}
@@ -121,12 +118,20 @@ public class ContactServlet extends BaseServlet {
 		request.setAttribute("contacts", ContactDAO.getInstance().getAllContacts());
 		try {
 			forward(request, response, "/index.jsp");
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ServletException e) {
+		} catch (IOException | ServletException e) {
 			e.printStackTrace();
 		}
 	}
+	
+//	private void test(HttpServletRequest request, HttpServletResponse response) {
+//		setSuccessCode(request, "testing after");
+//		setErrorCode(request, "hello 2");
+//		try {
+//			forward(request, response, "/index.jsp");
+//		} catch (IOException | ServletException e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	
 }
